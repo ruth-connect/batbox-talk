@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	
+		<title>BatBox Boiler Controller</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+		<!-- configuration parameters -->
+		<meta name="defaultView" content="slideshow" />
+		<meta name="controlVis" content="hidden" />
+		
+		<!-- favicon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico"/>
+		
+		<!-- stylesheet links -->
+		<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css' />
+		<link href="https://static1.squarespace.com/static/ta/5594f9fce4b0c1a905697ba1/579/assets/fonts/calluna/stylesheet.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="/ui/default/slides.css" type="text/css" media="projection" id="slideProj" />
+		<link rel="stylesheet" href="/ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+		<link rel="stylesheet" href="/ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+		<link rel="stylesheet" href="/ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+				
+		<!-- S5 JS -->
+		<script src="/ui/default/slides.js" type="text/javascript"></script>
+		
+	</head>
+	<body>
+		<div class="layout">
+			<div id="controls"></div>
+			<div id="currentSlide"></div>
+			<div id="header"></div>
+			<div id="footer">
+				<h1>BatBox - Wi-Fi Boiler Controller in Java with Spring Boot and Pi4J</h1>
+				<h2>West Midlands Java User Group, 27th September 2016</h2>
+			</div>
+		</div>
+		
+		<div class="presentation">
+		
+			<div class="slide">
+				<h1>BatBox - Wi-Fi Boiler Controller in Java with Spring Boot and Pi4J</h1>
+				<h2>West Midlands Java User Group, 27th September 2016</h2>
+				<h3>Ruth Mills</h3>
+				<h4>Java Lead Developer, Connect Group</h4>
+			</div>
+			
+			<div class="slide">
+				<h1>Why make your own Boiler Controller?</h1>
+				<ul>
+					<li>The current 1970s mechanical controller has died</li>
+					<li>The current boiler is built like a tank</li>
+					<li>We can't afford a new boiler</li>
+					<li>Reverse-engineering the old controller shows that all it needs is 2 relays - one for heating, one for hot water</li>
+					<li>The Raspberry Pi 3 is cheap, tiny, has built-in Wi-Fi, and you can control stuff via GPIO (General Purpose Input/Output) pins</li>
+					<li>You can get relay boards that work with the Raspberry Pi for a few quid off eBay</li>
+					<li>Building your own is cool and you get to learn new stuff</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>The old boiler controller</h1>
+				<div style="height:auto; width:auto;">		
+					<img src="images/old-boiler-controller.jpg" alt="old boiler controller"/>
+				</div>
+			</div>
+			
+			<div class="slide">
+				<h1>GPIO</h1>
+				<ul>
+					<li>General Purpose Input/Output</li>
+					<li>Generic pins (e.g. on Raspberry Pi) which can be assigned by user at runtime</li>
+					<li>Each pin can be dynamically assigned as input or output</li>
+					<li>Input pins can read information from sensors, etc</li>
+					<li>Output pins can switch devices on and off, write to serial ports, etc</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>Raspberry Pi 3 GPIO Pins</h1>
+				<div style="height:auto; width:auto;">		
+					<img src="images/raspberry-pi-3-gpio.png" alt="Raspberry Pi 3 GPIO Pins"/>
+				</div>
+			</div>
+			
+			<div class="slide">
+				<h1>Pi4J - Java API for Raspberry Pi GPIO</h1>
+				<ul>
+					<li><a href="http://pi4j.com/">pi4j.com</a></li>
+					<li>Friendly object-oriented I/O API and implementation libraries in Java</li>
+					<li>Access the full I/O capabilities of the Raspberry Pi platform</li>
+					<li>Abstracts the low-level native integration and interrupt monitoring</li>
+					<li>Requires <a href="http://wiringpi.com/">WiringPi</a> to be installed on the Raspberry Pi</li>
+					<li>Calls the <a href="http://wiringpi.com/">WiringPi</a> code (written in C) using JNI</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>Pi4J in action - New Boiler Controller</h1>
+				<ul>
+					<li>Called "BatBox", because there are already thermostats called Nest and Hive, and bats are cool!</li>
+					<li>Written as a Spring Boot webapp using Pi4J</li>
+					<li>Uses 3 GPIO outputs:<br/>
+					GPIO 8 - <b style="color: #00CC00;">Green LED</b> (up - turns on once the Spring Boot application has initialised)<br/>
+					GPIO 9 - <b style="color: #EECC00;">Yellow LED</b> and relay (hot water)<br/>
+					GPIO 7 - <b style="color: #FF0000;">Red LED</b> and relay (heating)</li>
+					<li>The <b>Blue LED</b> (power) is wired directly to the Raspberry Pi 3's 5V output and just shows that the Raspberry Pi 3 has power</li>
+					<li>Let's fire it up - it takes a couple of minutes or so before the green LED comes on</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>A cheeky look inside</h1>
+				<img src="images/inside-batbox.jpg" alt="Inside BatBox"/>
+			</div>
+			
+			<div class="slide">
+				<h1>BatBox Boiler Controller API</h1>
+				<ul>
+					<li>Spring Boot exposes 3 HTTP endpoints:</li>
+					<li><a href="http://192.168.66.61:61455/boiler/off">http://192.168.66.61:61455/boiler/off</a> - turns the boiler off</li>
+					<li><a href="http://192.168.66.61:61455/boiler/hotWaterOnly">http://192.168.66.61:61455/boiler/hotWaterOnly</a> - turns on hot water only</li>
+					<li><a href="http://192.168.66.61:61455/boiler/heatingAndHotWater">http://192.168.66.61:61455/boiler/heatingAndHotWater</a> - turns on heating and hot water</li>
+					<li>Let's look at the code - <b>BoilerController.java</b> contains the HTTP endpoints, and <b>BoilerServiceImpl.java</b> switches the GPIO outputs using Pi4J</li>
+					<li>Once the green LED is on, let's see it in action - <b>LIVE DEMO!!!</b></li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>What's Next</h1>
+				<ul>
+					<li><b>Replace the old boiler controller</b> - I still need to install the BatBox boiler controller in the kitchen at home, to replace the old one that doesn't work any more</li>
+					<li><b>Write a proper timer/control webapp</b> - the example timer application I demoed tonight is a proof of concept only - I need to design something more intelligent and extensible, with a proper UI</li>
+					<li><b>Add a Wi-Fi controlled socket to switch the air conditioning</b> - when the temperature gets too high, the air conditioning could be turned on automatically</li>
+					<li><b>Integration with Mycroft.ai</b> - Mycroft.ai is a Raspberry Pi 3-powered voice-controlled artificial intelligence device (like an open source Amazon Echo) for controlling IoT devices. I should be receiving my Mycroft units in a few weeks, after having supported their Kickstarter last year</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>Further Resources</h1>
+				<ul>
+					<li>Slide deck on GitHub - <a href="https://github.com/ruth-connect/batbox-talk">https://github.com/ruth-connect/iot-microservices-spring-boot-talk</a></li>
+					<li>Boiler Controller code on GitHub - <a href="https://github.com/ruth-connect/batbox-boiler-controller">https://github.com/ruth-connect/batbox-boiler-controller</a></li>
+					<li>Thermostat code on GitHub - <a href="https://github.com/ruth-connect/batbox-thermostat">https://github.com/ruth-connect/batbox-thermostat</a></li>
+					<li>Timer proof of concept code on GitHub - <a href="https://github.com/ruth-connect/batbox-timer-proof-of-concept">https://github.com/ruth-connect/batbox-timer-proof-of-concept</a></li>
+					<li>Pi4J - <a href="http://pi4j.com/">http://pi4j.com/</a></li>
+					<li>Hacking the Internet of Things blog - <a href="http://iot.ruthmills.me.uk/">http://iot.ruthmills.me.uk/</a></li>
+				</ul>
+			</div>
+				
+		</div>
+	</body>
+</html>
