@@ -126,6 +126,39 @@
 			</div>
 			
 			<div class="slide">
+				<h1>BatBox Room Thermostat</h1>
+				<ul>
+					<li>Software runs on another Raspberry Pi 3 in the lounge</li>
+					<li>Uses the DHT22/AM2302 temperature and humidity sensor</li>
+					<li>Does not use Pi4J, as a Google search found results where there were issues with using Pi4J to read from the DHT22/AM2302 sensor</li>
+					<li>Instead, ThermostatServiceImpl.java calls out to <a href="https://github.com/technion/lol_dht22">loldht</a> software using ProcessBuilder and parses the output</li>
+					<li>ThermostatController.java then returns the current temperature and humidity values in JSON format</li>
+					<li>The HTTP endpoint is at:<br/><a href="http://192.168.66.62:61453/thermostat/readTemperatureAndHumidity">http://192.168.66.62:61453/thermostat/readTemperatureAndHumidity</a></li>
+				</ul>
+			</div>
+			
+			<div class="slide">
+				<h1>Proof of Concept Timer Control</h1>
+				<ul>
+					<li>Spring Boot application to wire thermostat and boiler control together, with timer functionality</li>
+					<li>StatusPoller.java uses the <b>@Scheduled(cron = "*/10 * * * * *")</b> annotation to invoke the checkStatus() method every 10 seconds</li>
+					<li>This calls ControlServiceImpl.java, which gets the current time and then reads the temperature by invoking the thermostat HTTP endpoint</li>
+					<li>Spring's <b>RestTemplate</b> class is used to invoke the HTTP endpoint and parse the JSON response containing the temperature and humidity</li>
+					<li>Based on the current time and temperature, the boiler controller is then invoked using <b>RestTemplate</b></li>
+				</ul>
+			</div>
+			<div class="slide">
+				<h1>Demo of Timer Control</h1>
+				<ul>
+					<li>First, read the current temperature in the room by hitting the thermostat endpoint - then set the target level to slightly above the current temperature</li>
+					<li>If the temperature is below a set level, both the heating and hot water are turned on (my boiler will only do heating if hot water is turned on as well)</li>
+					<li>If the temperature is above a set level, then, if we are between 0 and 30 seconds in the current minute, hot water only is turned on</li>
+					<li>If the temperature is below a set level, then, if we are after 30 seconds in the current minute, both heating and hot water are turned off</li>
+					<li>The appropriate HTTP endpoint is invoked to instruct the boiler controller to perform the required action</li>
+				</ul>
+			</div>
+			
+			<div class="slide">
 				<h1>What's Next</h1>
 				<ul>
 					<li><b>Replace the old boiler controller</b> - I still need to install the BatBox boiler controller in the kitchen at home, to replace the old one that doesn't work any more</li>
