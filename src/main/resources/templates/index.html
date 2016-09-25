@@ -65,6 +65,13 @@
 			</div>
 			
 			<div class="slide">
+				<h1>The old wiring diagram</h1>
+				<div style="height:auto; width:auto;">		
+					<img src="images/wiring-diagram.png" alt="old wiring diagram"/>
+				</div>
+			</div>
+			
+			<div class="slide">
 				<h1>GPIO</h1>
 				<ul>
 					<li>General Purpose Input/Output</li>
@@ -141,7 +148,7 @@
 				<h1>Proof of Concept Timer Control</h1>
 				<ul>
 					<li>Spring Boot application to wire thermostat and boiler control together, with timer functionality</li>
-					<li>StatusPoller.java uses the <b>@Scheduled(cron = "*/10 * * * * *")</b> annotation to invoke the checkStatus() method every 10 seconds</li>
+					<li>StatusPoller.java uses the <b>@Scheduled(cron = "*/5 * * * * *")</b> annotation to invoke the checkStatus() method every 5 seconds</li>
 					<li>This calls ControlServiceImpl.java, which gets the current time and then reads the temperature by invoking the thermostat HTTP endpoint</li>
 					<li>Spring's <b>RestTemplate</b> class is used to invoke the HTTP endpoint and parse the JSON response containing the temperature and humidity</li>
 					<li>Based on the current time and temperature, the boiler controller is then invoked using <b>RestTemplate</b></li>
@@ -150,10 +157,11 @@
 			<div class="slide">
 				<h1>Demo of Timer Control</h1>
 				<ul>
-					<li>First, read the current temperature in the room by hitting the thermostat endpoint - then set the target level to slightly above the current temperature</li>
-					<li>If the temperature is below a set level, both the heating and hot water are turned on (my boiler will only do heating if hot water is turned on as well)</li>
-					<li>If the temperature is above a set level, then, if we are between 0 and 30 seconds in the current minute, hot water only is turned on</li>
-					<li>If the temperature is below a set level, then, if we are after 30 seconds in the current minute, both heating and hot water are turned off</li>
+					<li>Temperature, humidity, and status of timer, hot water and heating are updated every 5 seconds</li>
+					<li>Hot water and heating can each be set to off, timer, or on</li>
+					<li>The timer turns on for 15 seconds then turns off for 15 seconds and repeats in that cycle</li>
+					<li>Heating only turns on if the current temperature is below the target temperature</li>
+					<li>The target temperature can be set to the nearest 0.5 C</li>
 					<li>The appropriate HTTP endpoint is invoked to instruct the boiler controller to perform the required action</li>
 				</ul>
 			</div>
@@ -162,7 +170,7 @@
 				<h1>What's Next</h1>
 				<ul>
 					<li><b>Replace the old boiler controller</b> - I still need to install the BatBox boiler controller in the kitchen at home, to replace the old one that doesn't work any more</li>
-					<li><b>Write a proper timer/control webapp</b> - the example timer application I demoed tonight is a proof of concept only - I need to design something more intelligent and extensible, with a proper UI</li>
+					<li><b>Write a proper timer/control webapp</b> - the example timer application I demoed tonight is a proof of concept only - I need to design something more intelligent and extensible, with a better UI</li>
 					<li><b>Add a Wi-Fi controlled socket to switch the air conditioning</b> - when the temperature gets too high, the air conditioning could be turned on automatically</li>
 					<li><b>Integration with Mycroft.ai</b> - Mycroft.ai is a Raspberry Pi 3-powered voice-controlled artificial intelligence device (like an open source Amazon Echo) for controlling IoT devices. I should be receiving my Mycroft units in a few weeks, after having supported their Kickstarter last year</li>
 				</ul>
