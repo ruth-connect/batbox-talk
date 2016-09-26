@@ -121,6 +121,11 @@
 			</div>
 			
 			<div class="slide">
+				<h1>Manual Override wiring</h1>
+				<img src="images/manual-override.jpg" alt="Manual Override wiring"/>
+			</div>
+			
+			<div class="slide">
 				<h1>BatBox Boiler Controller API</h1>
 				<ul>
 					<li>Spring Boot exposes 3 HTTP endpoints:</li>
@@ -147,7 +152,7 @@
 			<div class="slide">
 				<h1>Proof of Concept Timer Control</h1>
 				<ul>
-					<li>Spring Boot application to wire thermostat and boiler control together, with timer functionality</li>
+					<li>Spring Boot application to wire thermostat and boiler control together, with timer functionality - <a href="http://localhost:61454/">http://localhost:61454/</a></li>
 					<li>StatusPoller.java uses the <b>@Scheduled(cron = "*/5 * * * * *")</b> annotation to invoke the checkStatus() method every 5 seconds</li>
 					<li>This calls ControlServiceImpl.java, which gets the current time and then reads the temperature by invoking the thermostat HTTP endpoint</li>
 					<li>Spring's <b>RestTemplate</b> class is used to invoke the HTTP endpoint and parse the JSON response containing the temperature and humidity</li>
@@ -158,10 +163,10 @@
 				<h1>Demo of Timer Control</h1>
 				<ul>
 					<li>Temperature, humidity, and status of timer, hot water and heating are updated every 5 seconds</li>
-					<li>Hot water and heating can each be set to off, timer, or on</li>
+					<li>Hot water and heating can each be set to off, timer, or on (via REST calls)</li>
 					<li>The timer turns on for 15 seconds then turns off for 15 seconds and repeats in that cycle</li>
 					<li>Heating only turns on if the current temperature is below the target temperature</li>
-					<li>The target temperature can be set to the nearest 0.5 C</li>
+					<li>The target temperature can be set to the nearest 0.5 C (via REST call)</li>
 					<li>The appropriate HTTP endpoint is invoked to instruct the boiler controller to perform the required action</li>
 				</ul>
 			</div>
